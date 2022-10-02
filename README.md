@@ -17,7 +17,21 @@ We are sharing our
 
 # Want to use our API (issue digital receipt)?
 
-Our API is still in beta version and available to limited users.  If you are interested in using our API please contact us first through our contact form. https://receiptroller.com/en/contactus
+Our API can be used here : https://api.receiptroller.com/index.html 
+
+Our API is still in beta version and available to limited users.  If you are interested in using our API please contact us first through our contact form. https://receiptroller.com/en/contactus.
+
+## What does API offer?
+
+With our API, you can
+
+- Login and get token to use API.  (you need to be register user and have proper role to use our API)
+- See list of organizations you belong to.
+- Search, Get, Create receipts.
+- Search, Get, Create, Update stores.
+- Search, Get, Create, Update terminals.
+- Search, Get, Create, Update themes.
+
 
 # Join us?
 

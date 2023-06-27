@@ -11,7 +11,7 @@ V1.2では下記の項目を改修し変更いたします。本番反映時期�
 7. `items`内の`salesPrice`のほかに、`price`を追加します。`price`は通常価格、`salesPrice`は販売価格となります。差分は値引きとして自動計算されます。
 8. `items`内の`itemId`は`LineItemId`に名前変更します。
 9. `items`内の`itemTypes`は`LineItemType`に変更します。
-10. `items`内に`tax`に関するオブジェクトを追加します。
+10. `items`内に`taxes`に関する配列オブジェクトを追加します。
 11. `currency`を追加します。値はISO4217をご利用ください。
 12. リクエストエラーがあった際にはエラーを戻すようにいたします。
 

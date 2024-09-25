@@ -1,38 +1,36 @@
 # Welcome to {RECEIPT}ROLLER
 
-Hello, Developers.  
+Hello, Developers!
 
-We are here to reduce paper receipt usages, by providing a digital receipt service for every one, every where at all time.
+Are you here to digitize your receipts and utilize that receipt data for your business? So are we. At {RECEIPT}ROLLER, we're revolutionizing the way receipts are issued and stored by providing a seamless digital receipt service accessible to everyone, everywhere, at any time.
 
-We update contents for developers here.  Please raise (use) issue features to raise issues to us.
+We continuously update our content for developers right here. Got ideas or issues? Feel free to raise them using our issue tracker. Your feedback helps us improve and innovate.
 
-For our service, please refer to https://receiptroller.com/en
+For more information about our services, visit [our website](https://receiptroller.com/en).
 
-# What we share here
+## What We Share Here
 
-We are sharing our 
-- Documents for developers
-- C# Libralies that we use
-- Sample code for our API
+We're excited to share:
 
-# Want to use our API (issue digital receipt)?
+- Comprehensive developer documentation
+- C# libraries we use in our projects
+- Sample code snippets for our API
 
-Our API can be used here : https://api.receiptroller.com/index.html 
+## Interested in Using Our API to Issue Digital Receipts?
 
-Our API is still in beta version and available to limited users.  If you are interested in using our API please contact us first through our contact form. https://receiptroller.com/en/contactus.
+Our API is available at [api.receiptroller.com](https://api.receiptroller.com/index.html). Currently in beta, it's accessible to a limited number of users. If you're interested in getting early access, please reach out to us via our [contact form](https://receiptroller.com/en/contactus).
 
-## What does API offer?
+### What Does Our API Offer?
 
-With our API, you can
+With our API, you can:
 
-- Login and get token to use API.  (you need to be register user and have proper role to use our API)
-- See list of organizations you belong to.
-- Search, Get, Create receipts.
-- Search, Get, Create, Update stores.
-- Search, Get, Create, Update terminals.
-- Search, Get, Create, Update themes.
+- **Authenticate** and receive a token to use the API (requires registered user status and appropriate permissions)
+- **Access** a list of organizations you're affiliated with
+- **Search**, **retrieve**, and **create** receipts
+- **Search**, **retrieve**, **create**, and **update** stores
+- **Search**, **retrieve**, **create**, and **update** terminals
+- **Search**, **retrieve**, **create**, and **update** themes
 
+## Join Our Team!
 
-# Join us?
-
-We are looking for developers, full remote.  C#, Azure is tech stack we use.
+We're looking for passionate developers to join us remotely. If you have experience with C# and Azure, we'd love to hear from you. Become a part of our mission to digitize receipts and help businesses make the most of their receipt data.

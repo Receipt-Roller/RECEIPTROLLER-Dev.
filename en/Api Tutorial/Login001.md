@@ -1,70 +1,188 @@
-# Managing Account with {RECEIPT}ROLLER API
+# Login and Access Tokens
 
-The {RECEIPT}ROLLER API allows you to log in and view your profile.
+This page explains how to obtain the access token necessary to use the {RECEIPT}ROLLER API. To interact with the API, you must first log in and obtain an access token, which proves your credentials and should be included in the header of each API request.
 
-## Login
+## Login (/account/login)
 
-Before logging in, you must have an account. If you do not have an account yet, please visit https://receiptroller.com/en and create a business account first.
+An **access token** is required to use the API. It proves your identity and is obtained using the email and password of your {RECEIPT}ROLLER account. If you don’t have an account, [register here](https://receiptroller.com/identity/account/register?culture=en).
 
-To log in, use the `/account/login` endpoint. This endpoint accepts POST requests.
+### Authentication Method
 
-Here's an example of a request body for the login endpoint:
+Once logged in, include the access token in the header of subsequent API requests like this:
+
+```
+Authorization: Bearer {YOUR TOKEN HERE}
+```
+
+---
+
+## Request
+
+- **Endpoint**
+
+  ```
+  POST https://api.receiptroller.com/account/login
+  ```
+
+- **Headers**
+
+  ```
+  Content-Type: application/json
+  Accept: application/json
+  ```
+
+- **Request Body**
+
+  | Field      | Type     | Required | Description                                                 |
+  |------------|----------|----------|-------------------------------------------------------------|
+  | userName   | string   | Yes      | The registered email address                                |
+  | password   | string   | Yes      | The account password                                        |
+  | expire     | datetime | Optional | Expiration time of the token (default applies if not set)    |
+
+### Request Example
+
+```bash
+curl -X 'POST' \
+  'https://api.receiptroller.com/account/login' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "userName": "your_email@example.com",
+  "password": "your_password",
+  "expire": "2022-12-25T22:11:52.130Z"
+}'
+```
+
+---
+
+## Response
+
+- **Status Codes**
+
+  - **200 OK**: Authentication successful.
+  - **400 Bad Request**: Invalid request.
+  - **401 Unauthorized**: Authentication failed (incorrect email or password).
+
+- **Response Body**
+
+  | Field   | Type     | Description          |
+  |---------|----------|----------------------|
+  | token   | string   | Access token         |
+  | expire  | datetime | Token expiration     |
+
+### Successful Response Example
 
 ```json
 {
-  "userName": "string",
-  "password": "string",
-  "expire": "2023-07-08T00:22:48.519Z"
+  "token": "{YOUR TOKEN HERE}",
+  "expire": "2022-12-25T22:11:52.13Z"
 }
 ```
 
-If the login is successful, you should get a return value like this:
+### Error Response Example
 
 ```json
 {
-  "token": "string",
-  "expire": "2023-07-08T00:22:48.545Z"
+  "error": "Invalid credentials",
+  "status": 401
 }
 ```
 
-The token is a Bearer token that you can pass in the header of the API requests.
+---
 
-If the login is not successful, you will get an error response with a 400 status, like this:
+## Using the Token
 
-```json
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
+Once you've obtained the access token, include it in the headers of other API requests like this:
+
+```
+Authorization: Bearer {YOUR TOKEN HERE}
 ```
 
-Please read the error message and try to resolve the issue.
+### Example of a Request with Token
 
-## View Profile
+```bash
+curl -X 'GET' \
+  'https://api.receiptroller.com/receipts' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer {YOUR TOKEN HERE}'
+```
 
-To view your profile, use the following endpoint:
+---
 
-`/account/me`
+## Error Handling
 
-This endpoint lets you check the currently logged-in user's profile. 
+When an error occurs, the API returns a response in the following format:
 
-Once you have obtained the Bearer token from the login process, you can call the `/account/me` endpoint to check your profile.
+- **Response Body**
 
-The `/account/me` endpoint accepts GET requests. Make sure to pass the Bearer token in the header of your API request.
+  | Field  | Type     | Description       |
+  |--------|----------|-------------------|
+  | error  | string   | Error message     |
+  | status | int      | HTTP status code  |
 
-Here's an example of the response you should receive:
+### Common HTTP Status Codes
+
+- **400 Bad Request**: The request was invalid.
+- **401 Unauthorized**: Authentication failed.
+- **403 Forbidden**: You don't have access to this resource.
+- **404 Not Found**: The resource could not be found.
+- **500 Internal Server Error**: A server error occurred.
+
+---
+
+# Get Account Info (/account/me)
+
+This endpoint is used to retrieve account information about the currently logged-in user or validate the provided access token. An access token is required to retrieve the authenticated user's account details.
+
+## Authentication Method
+
+Include the token you obtained during login in the headers:
+
+```
+Authorization: Bearer {YOUR TOKEN HERE}
+```
+
+---
+
+## Request
+
+- **Endpoint**
+
+  ```
+  GET https://api.receiptroller.com/account/me
+  ```
+
+- **Headers**
+
+  ```
+  Authorization: Bearer {YOUR TOKEN HERE}
+  ```
+
+---
+
+## Response
+
+- **Status Codes**
+
+  - **200 OK**: Successfully retrieved account info.
+  - **401 Unauthorized**: Invalid or missing token.
+
+- **Response Body**
+
+  | Field     | Type     | Description         |
+  |-----------|----------|---------------------|
+  | id        | string   | User ID             |
+  | userName  | string   | Username            |
+  | email     | string   | Email               |
+
+---
+
+## Response Example
 
 ```json
 {
-  "userName": "string",
-  "roles": [
-    "string"
-  ]
+  "id": "12345",
+  "userName": "user_example",
+  "email": "user@example.com"
 }
 ```

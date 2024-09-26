@@ -1,4 +1,135 @@
+# レシートデータの管理
+
+レシートデータ管理では、取引に関する詳細情報を収集し、保存します。これには、顧客情報、支払い方法、購入商品の詳細、適用された割引や税金、スタッフの情報などが含まれます。また、メンバーシッププログラムやクーポンの適用履歴、サブスクリプション情報も管理します。これにより、店舗の売上データを効率的に整理し、顧客ごとの購入履歴や支払情報の追跡が可能になります。レシートには印刷用のカスタマイズ可能な情報を含めることもできます。
+
+# レシートデータ型
+
+| フィールド名                      | 型            | 説明                                  |
+|-----------------------------------|---------------|---------------------------------------|
+| organizationId                    | string        | 組織のID                              |
+| receiptId                         | string        | レシートID                            |
+| transactionType                   | int           | 取引タイプ (例: 1=購入, 2=返品)         |
+| cancelType                        | int           | キャンセルタイプ                       |
+| terminalTransactionId             | string        | 端末取引ID                            |
+| terminalTransactionDateTime       | string (ISO8601) | 端末取引日時                        |
+| timestamp                         | string (ISO8601) | レシートの作成タイムスタンプ         |
+| channelId                         | string        | チャネルID                            |
+| terminalId                        | string        | 端末ID                                |
+| customer.customerId               | string        | 顧客ID                                |
+| customer.customerName             | string        | 顧客の名前                            |
+| customer.customerPrintName        | string        | 顧客印刷用の名前                      |
+| customer.customerGroup            | string        | 顧客グループ                          |
+| customer.customerCode             | string        | 顧客コード                            |
+| customer.customerMemo             | string        | 顧客メモ                              |
+| customer.destinationEmail         | string        | 顧客のEメール                         |
+| customer.destinationSms           | string        | 顧客のSMS番号                         |
+| customer.destinationLineMid       | string        | 顧客のLINE MID                        |
+| roundingPosition                  | int           | 丸めの位置                            |
+| roundingMethod                    | int           | 丸めの方法                            |
+| memo                              | string        | レシートメモ                          |
+| tags                              | string        | レシートに付けられたタグ              |
+| barcode                           | string        | バーコード                            |
+| themeId                           | string        | テーマID                              |
+| store.storeId                     | string        | 店舗ID                                |
+| store.storeCode                   | string        | 店舗コード                            |
+| store.storeName                   | string        | 店舗名                                |
+| store.storePrintName              | string        | 店舗印刷用の名前                      |
+| store.storeAddress                | string        | 店舗の住所                            |
+| store.storePrintAddress           | string        | 店舗印刷用の住所                      |
+| store.storeRegisgrationName       | string        | 店舗登録名                            |
+| store.storeRegisgrationCode       | string        | 店舗登録コード                        |
+| store.storeTel                    | string        | 店舗電話番号                          |
+| store.storeMemo                   | string        | 店舗メモ                              |
+| staff.staffId                     | string        | スタッフID                            |
+| staff.staffCode                   | string        | スタッフコード                        |
+| staff.staffName                   | string        | スタッフ名                            |
+
+## 支払い情報
+
+| フィールド名                      | 型            | 説明                                  |
+|-----------------------------------|---------------|---------------------------------------|
+| paymentSummary.shippingFee        | int           | 配送料                                |
+| paymentSummary.serviceFee         | int           | サービス料                            |
+| paymentSummary.otherFee           | int           | その他の料金                          |
+| paymentSummary.grandTotal         | int           | 合計金額                              |
+| paymentSummary.depositMethod      | int           | 預金方法                              |
+| paymentSummary.deposit            | int           | 預金額                                |
+| paymentSummary.change             | int           | 釣銭                                  |
+| paymentSummary.subTotal           | int           | 小計                                  |
+| paymentSummary.subTotalDiscountAmount | int       | 小計割引額                            |
+| paymentSummary.subTotalDiscountRate | float      | 小計割引率                            |
+| paymentSummary.subtotalDiscountPrice | int       | 割引後小計                            |
+| paymentSummary.taxes              | array         | 税金の詳細                            |
+
+### 税金の詳細
+
+| フィールド名                      | 型            | 説明                                  |
+|-----------------------------------|---------------|---------------------------------------|
+| taxes.taxIfInclude                | int           | 税込み額                              |
+| taxes.taxIfExclude                | int           | 税抜き額                              |
+| taxes.taxPercentageIfInclude      | int           | 税率（込み）                          |
+| taxes.taxPercentageIfExclude      | int           | 税率（抜き）                          |
+| taxes.applicableSubTotalAmount    | int           | 適用された小計金額                    |
+
+## 商品情報 (itemDetailLines)
+
+| フィールド名                      | 型            | 説明                                  |
+|-----------------------------------|---------------|---------------------------------------|
+| itemDetailLines.lineId            | string        | 行ID                                  |
+| itemDetailLines.itemId            | string        | 商品ID                                |
+| itemDetailLines.itemType          | int           | 商品タイプ                            |
+| itemDetailLines.salesType         | int           | 販売タイプ                            |
+| itemDetailLines.productId         | string        | 商品コード                            |
+| itemDetailLines.productCode       | string        | 商品コード                            |
+| itemDetailLines.productName       | string        | 商品名                                |
+| itemDetailLines.taxCategory       | int           | 税カテゴリ                            |
+| itemDetailLines.price             | int           | 価格                                  |
+| itemDetailLines.salesPrice        | int           | 販売価格                              |
+| itemDetailLines.quantity          | int           | 数量                                  |
+| itemDetailLines.taxDivision       | string        | 税区分                                |
+| itemDetailLines.taxFreeDivision   | int           | 非課税区分                            |
+| itemDetailLines.taxFreeAmount     | int           | 非課税額                              |
+| itemDetailLines.categoryId        | string        | カテゴリID                            |
+| itemDetailLines.categoryName      | string        | カテゴリ名                            |
+| itemDetailLines.taxRate           | string        | 税率                                  |
+| itemDetailLines.unitNonDiscountSum| int           | 割引前合計                            |
+| itemDetailLines.bargainName       | string        | 特価名                                |
+| itemDetailLines.bargainDiscountProportional | int | 割引率                                |
+| itemDetailLines.taxIncludeProportional | int    | 税込み割引率                          |
+| itemDetailLines.taxExcludeProportional | int    | 税抜き割引率                          |
+| itemDetailLines.unitDiscountSum   | int           | 割引後合計                            |
+| itemDetailLines.unitDiscountName  | string        | 割引名                                |
+| itemDetailLines.discountPriceProportional | int   | 割引額                                |
+| itemDetailLines.discountCouponProportional | int  | クーポン割引                          |
+| itemDetailLines.couponDiscount    | int           | クーポン割引額                        |
+| itemDetailLines.taxes             | array         | 税金情報                              |
+
+## サブスクリプション
+
+| フィールド名                      | 型            | 説明                                  |
+|-----------------------------------|---------------|---------------------------------------|
+| subscriptions.lineId              | string        | 行ID                                  |
+| subscriptions.subscriptionCode    | string        | サブスクリプションコード               |
+| subscriptions.description         | string        | サブスクリプション説明                 |
+| subscriptions.charged             | int           | 請求金額                              |
+| subscriptions.unitInCharge        | string        | 請求単位                              |
+| subscriptions.validSince          | string (ISO8601) | 有効期間の開始                      |
+| subscriptions.validUntil          | string (ISO8601) | 有効期間の終了                      |
+| subscriptions.paymentMethod       | string        | 支払い方法                            |
+| subscriptions.memo                | string        | メモ                                  |
+| subscriptions.maxCall             | int           | 最大コール数                          |
+| subscriptions.called              | int           | コール済み数                          |
+| subscriptions.chargedBy           | string        | 請求元                                |
+| subscriptions.isExipred           | boolean       | 有効期限が切れているかどうか           |
+| subscriptions.exipireHandled      | string (ISO8601) | 有効期限処理日                      |
+| subscriptions.chargeResponseStatus| string        | 請求ステータス                        |
+| subscriptions.chargeResponseMessage| string       | 請求メッセージ                        |
+
+
+
 # レシートデータの取得 (/{organizationId}/receipts)
+
+
 
 ## リクエスト
 
@@ -1179,25 +1310,25 @@ curl -X 'POST' \
   "error": "Image not found",
   "status": 404
 }
-
+```
 #### OCRでレシートとして認識できなかった場合
 ```json
 {
  "error": "Unable to process receipt from image",
   "status": 422
 }
-
+```
 #### サブスクリプションが有効でない場合
 ```json
 {
   "error": "Subscription not active",
   "status": 403
 }
-
+```
 #### サーバー処理に失敗した場合
 ```json
 {
   "error": "An unexpected server issue occurred",
   "status": 500
 }
-
+```

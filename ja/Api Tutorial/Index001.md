@@ -10,6 +10,8 @@ APIを利用するためのアカウント登録方法については、[こち�
 
 APIは無料で30日間に1,000回まで利用可能です。それ以上の利用や商用利用には有料プランが必要です。
 
+また、Swaggerドキュメントを通じてAPIの利用やテストが可能です。[こちら](https://api.receiptroller.com/index.html?urls.primaryName=v1.2)からアクセスしてください。
+
 ## 目次
 
 - [ログイン、トークンの取得](https://github.com/Receipt-Roller/RECEIPTROLLER-Dev./blob/main/ja/Api%20Tutorial/Login001.md)

@@ -1,69 +1,127 @@
 # ログイン
 
-APIを利用する際にはTokenが必要になります。 TokenとはAPIを利用する際に必用となる、会員情報を示すものになります。
-普段利用している{RECEIPT}ROLLERのメールアドレスとパスワードで利用することができます。
-まだアカウントを登録されていない方はこちらからご登録ください。
-https://receiptroller.com/identity/account/register?culture=ja
+APIを利用するには、**アクセストークン**が必要です。アクセストークンは、APIを利用する際にあなたの会員情報を証明するものです。
 
+普段お使いの{RECEIPT}ROLLERアカウントのメールアドレスとパスワードでログインできます。まだアカウントをお持ちでない方は、[こちらからご登録ください](https://receiptroller.com/identity/account/register?culture=ja)。
+
+## 認証方法
+
+ログイン後に取得したアクセストークンは、他のAPIエンドポイントへのリクエストで使用します。各リクエストのヘッダーに以下のようにトークンを含めてください。
+
+```
+Authorization: Bearer {YOUR TOKEN HERE}
+```
+
+---
 
 # リクエスト
 
-<table class="table">
-<tr>
-<td>userName</td>
-<td>登録されているメールアドレス</td>
-</tr>
+- **エンドポイント**
 
+  ```
+  POST https://api.receiptroller.com/account/login
+  ```
 
-<tr>
-<td>password</td>
-<td>パスワード</td>
-</tr>
+- **ヘッダー**
 
-<tr>
-<td>expire</td>
-<td>有効期限、ここで指定した期日まで発行されたトークンは有効となります。</td>
-</tr>
+  ```
+  Content-Type: application/json
+  Accept: application/json
+  ```
 
-</table>
+- **リクエストボディ**
 
-## リクエスト例
+  | フィールド名 | 型       | 必須 | 説明                                                        |
+  |--------------|----------|------|-------------------------------------------------------------|
+  | userName     | string   | 必須 | 登録しているメールアドレス                                      |
+  | password     | string   | 必須 | パスワード                                                    |
+  | expire       | datetime | 任意 | トークンの有効期限（指定しない場合はデフォルトの有効期限が適用されます） |
 
+### リクエスト例
 
-```
+```bash
 curl -X 'POST' \
   'https://api.receiptroller.com/account/login' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-  "userName": "{USER NAME}",
-  "password": "{PASSWORD}",
+  "userName": "your_email@example.com",
+  "password": "your_password",
   "expire": "2022-12-25T22:11:52.130Z"
 }'
 ```
 
+---
+
 # レスポンス
 
-<table class="table">
-<tr>
-<td>token</td>
-<td>アクセストークン</td>
-</tr>
+- **ステータスコード**
 
-<tr>
-<td>expire</td>
-<td>トークンの有効期限。</td>
-</tr>
+  - **200 OK**: 認証成功
+  - **400 Bad Request**: リクエストが不正
+  - **401 Unauthorized**: 認証失敗（メールアドレスまたはパスワードが間違っている可能性があります）
 
-</table>
+- **レスポンスボディ**
 
-## レスポンス例
+  | フィールド名 | 型       | 説明           |
+  |--------------|----------|----------------|
+  | token        | string   | アクセストークン   |
+  | expire       | datetime | トークンの有効期限 |
 
+### レスポンス例（成功時）
 
-```
+```json
 {
   "token": "{YOUR TOKEN HERE}",
   "expire": "2022-12-25T22:11:52.13Z"
 }
+```
+
+### エラーレスポンス例
+
+```json
+{
+  "error": "Invalid credentials",
+  "status": 401
+}
+```
+
+---
+
+## トークンの使用方法
+
+取得したアクセストークンは、他のAPIリクエストのヘッダーに以下のように追加してください。
 
 ```
+Authorization: Bearer {YOUR TOKEN HERE}
+```
+
+### トークンを使用したリクエスト例
+
+```bash
+curl -X 'GET' \
+  'https://api.receiptroller.com/receipts' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer {YOUR TOKEN HERE}'
+```
+
+---
+
+## エラーハンドリング
+
+API利用時にエラーが発生した場合、以下の形式でエラーレスポンスが返されます。
+
+- **レスポンスボディ**
+
+  | フィールド名 | 型     | 説明            |
+  |--------------|--------|-----------------|
+  | error        | string | エラーメッセージ    |
+  | status       | int    | HTTPステータスコード |
+
+### 共通のHTTPステータスコード
+
+- **400 Bad Request**: リクエスト内容が不正です。
+- **401 Unauthorized**: 認証に失敗しました。
+- **403 Forbidden**: アクセス権がありません。
+- **404 Not Found**: リソースが見つかりません。
+- **500 Internal Server Error**: サーバー内部でエラーが発生しました。

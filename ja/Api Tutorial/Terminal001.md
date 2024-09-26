@@ -4,7 +4,7 @@
 
 ---
 
-# 端末データの取得 (/{organizationId}/terminals)
+# 端末データの取得 (`/{organizationId}/terminals`)
 
 ## リクエスト
 
@@ -80,7 +80,7 @@ curl -X 'POST' \
   ```
 
 ---
-# 端末詳細の取得 (/{organizationId}/terminal/{id})
+# 端末詳細の取得 (`/{organizationId}/terminal/{id}`)
 
 ## リクエスト
 
@@ -129,7 +129,7 @@ curl -X 'GET' \
 
 ---
 
-# 端末の作成 (/{organizationId}/terminal/create)
+# 端末の作成 (`/{organizationId}/terminal/create`)
 
 ## リクエスト
 
@@ -190,7 +190,7 @@ curl -X 'POST' \
 
   ---
   
-# 端末の更新 (/{organizationId}/terminal/update)
+# 端末の更新 (`/{organizationId}/terminal/update`)
 
 ## リクエスト
 

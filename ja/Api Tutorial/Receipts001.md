@@ -1,399 +1,1203 @@
-レシートローラーAPIでレシートの作成または取得する方法をご紹介します。
+# レシートデータの取得 (/{organizationId}/receipts)
 
-APIのSwaggerドキュメントは下記をご参照ください。
-https://api.receiptroller.com/index.html
+## リクエスト
 
-# レシートの作成
-
-## レシート作成時のリクエスト
-
-レシート作成時は下記の値をポストしてください。
-ポスト先は　`/{organizationId}/receipt/upsert`  になります。 
-
+```bash
+curl -X 'POST' \
+  'https://api.receiptroller.com/{organizationId}/receipts' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer {YOUR TOKEN}' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "storeId": "1234-store-5678",
+    "terminalId": "tm-001",
+    "keyword": "レシート検索",
+    "sort": "transactionId asc",
+    "currentPage": 1,
+    "itemsPerPage": 10,
+    "year": 2024,
+    "month": 9
+}'
 ```
+
+- **storeId**: 店舗ID
+- **terminalId**: 端末ID
+- **keyword**: 検索キーワード
+- **sort**: 並び順（`transactionId asc` または `transactionId desc`）
+- **currentPage**: 現在のページ（ページネーション）
+- **itemsPerPage**: ページごとのアイテム数。上限は1000件です。
+- **year**: 検索対象の年
+- **month**: 検索対象の月
+
+## レスポンス
+
+```json
 {
-  "transactionType": 0,
-  "cancelType": "string",
-  "terminalTransactionId": "string",
-  "terminalTransactionDateTime": "2023-06-26T14:32:01.101Z",
-  "storeId": "string",
-  "terminalId": "string",
-  "staffId": "string",
-  "customerId": "string",
-  "customerCode": "string",
-  "customerGroup": "string",
-  "timeOfEnter": "2023-06-26T14:32:01.101Z",
-  "numberOfParty": 0,
-  "customerMemo": "string",
   "items": [
     {
-      "itemId": "string",
-      "itemTypes": 0,
-      "salesTypes": 0,
-      "productId": "string",
-      "productCode": "string",
-      "productName": "string",
-      "salesPrice": 0,
-      "qt": 0
+      "receipt": {
+        "organizationId": "1234-organization-5678",
+        "receiptId": "rec-001",
+        "transactionType": 1,
+        "cancelType": 0,
+        "terminalTransactionId": "txn-001",
+        "terminalTransactionDateTime": "2024-09-26T01:24:01.437Z",
+        "timestamp": "2024-09-26T01:24:01.437Z",
+        "channelId": "ch-001",
+        "terminalId": "tm-001",
+        "customer": {
+          "customerId": "cust-001",
+          "customerName": "山田 太郎",
+          "customerPrintName": "ヤマダ タロウ",
+          "customerGroup": "VIP",
+          "customerCode": "C123456",
+          "customerMemo": "特記事項なし",
+          "destinationEmail": "example@email.com",
+          "destinationSms": "090-1234-5678",
+          "destinationLineMid": "line-id-001",
+          "membershipPrograms": [
+            {
+              "membershipProgramName": "ゴールドメンバー",
+              "membershipProgramPointsUsed": "100",
+              "membershipProgramPointsAdded": "50",
+              "membershipProgramPointsAfter": "150",
+              "membershipProgramPointsBefore": "100",
+              "membershipProgramPointsNote": "キャンペーン加算"
+            }
+          ]
+        },
+        "roundingPosition": 2,
+        "roundingMethod": 1,
+        "memo": "レシートメモ内容",
+        "tags": "セール,特典",
+        "barcode": "BRC123456",
+        "themeId": "theme-001",
+        "store": {
+          "storeId": "1234-store-5678",
+          "storeCode": "S001",
+          "storeName": "渋谷ストア",
+          "storePrintName": "渋谷店",
+          "storeAddress": "東京都渋谷区道玄坂1-2-3",
+          "storePrintAddress": "渋谷区道玄坂1-2-3",
+          "storeRegisgrationName": "渋谷ストア有限会社",
+          "storeRegisgrationCode": "RG123456",
+          "storeTel": "03-1234-5678",
+          "storeMemo": "店舗メモ"
+        },
+        "staff": {
+          "staffId": "stf-001",
+          "staffCode": "S001",
+          "staffName": "鈴木 一郎"
+        },
+        "paymentSummary": {
+          "shippingFee": 500,
+          "serviceFee": 300,
+          "otherFee": 200,
+          "grandTotal": 10000,
+          "despoitMethod": 1,
+          "deposit": 10000,
+          "change": 0,
+          "subTotal": 9200,
+          "subTotalDiscountAmount": 300,
+          "subTotalDiscountRate": 3.5,
+          "subtotalDiscountPrice": 8900,
+          "taxes": [
+            {
+              "taxIfInclude": 500,
+              "taxIfExclude": 400,
+              "taxPercentageIfInclude": 8,
+              "taxPercentageIfExclude": 5,
+              "applicableSubTotalAmount": 8900
+            }
+          ]
+        },
+        "coupon": {
+          "couponName": "10%オフクーポン",
+          "couponPointsUsed": 100,
+          "couponPointsAdded": 50,
+          "couponPointsAfter": 150,
+          "couponPointsBefore": 100,
+          "couponNote": "クーポン適用"
+        },
+        "transactionId": "txn-001"
+      },
+      "itemDetailLines": [
+        {
+          "lineId": "line-001",
+          "itemId": "item-001",
+          "itemType": 1,
+          "salesType": 0,
+          "productId": "prod-001",
+          "productCode": "P001",
+          "productName": "商品A",
+          "taxCategory": 1,
+          "price": 1000,
+          "salesPrice": 900,
+          "quantity": 1,
+          "taxDivision": "内税",
+          "taxFreeDivision": 0,
+          "taxFreeAmount": 0,
+          "categoryId": "cat-001",
+          "categoryName": "食品",
+          "taxRate": "8%",
+          "unitNonDiscountSum": "1000",
+          "bargainName": "特価",
+          "bargainDiscountProportional": "100",
+          "taxIncludeProportional": "80",
+          "taxExcludeProportional": "70",
+          "unitDiscountSum": "900",
+          "unitDiscountName": "割引",
+          "discountPriceProportional": "100",
+          "discountCouponProportional": "50",
+          "couponDiscount": "50",
+          "taxes": [
+            {
+              "taxIfInclude": 80,
+              "taxIfExclude": 70,
+              "taxPercentageIfInclude": 8,
+              "taxPercentageIfExclude": 5,
+              "applicableSubTotalAmount": 900
+            }
+          ]
+        }
+      ],
+      "subscriptions": [
+        {
+          "lineId": "sub-001",
+          "subscriptionCode": "SUB123",
+          "description": "サブスクリプションA",
+          "charged": 1500,
+          "unitInCharge": "円",
+          "validSince": "2024-09-26T01:24:01.437Z",
+          "validUntil": "2024-12-26T01:24:01.437Z",
+          "paymentMethod": "クレジットカード",
+          "memo": "サブスクリプションメモ",
+          "maxCall": 10,
+          "called": 2,
+          "chargedBy": "サービスA",
+          "isExipred": false,
+          "exipireHandled": "2024-09-26T01:24:01.437Z",
+          "chargeResponseStatus": "success",
+          "chargeResponseMessage": "成功"
+        }
+      ]
     }
   ],
-  "subTotal": 0,
-  "subTotalDiscountAmount": 0,
-  "subTotalDiscountRate": 0,
-  "nameOfPoint": "string",
-  "pointsUsed": 0,
-  "pointsAdded": 0,
-  "totalPointsAfetr": 0,
-  "totalPointsBefore": 0,
-  "pointAs": 0,
-  "nameOfMile": "string",
-  "milesUsed": 0,
-  "milesAdded": 0,
-  "milesPointsAfetr": 0,
-  "milesPointsBefore": 0,
-  "milesNote": "string",
-  "taxPercentageIfInclude": 0,
-  "taxPercentageIfExclude": 0,
-  "roundingPosition": 0,
-  "roundingMethod": 0,
-  "shippingFee": 0,
-  "serviceFee": 0,
-  "otherFee": 0,
-  "grandTotal": 0,
-  "despoitMethod": 0,
-  "deposit": 0,
-  "change": 0,
-  "isClosed": true,
-  "closingDate": "2023-06-26T14:32:01.101Z",
-  "memo": "string",
-  "tags": "string",
-  "barcode": "string",
-  "themeId": "string"
+  "currentPage": 1,
+  "itemsPerPage": 10,
+  "totalItems": 1,
+  "totalPages": 1,
+  "keyword": "レシート検索",
+  "sort": "transactionId asc"
 }
 ```
-各項目は下記の通りです。
 
-|名前|タイプ|必須|備考|
-|:--|:--|:--|:--|
-|transactionType|数値|必須|0=通常販売　現在指定できるのは0のみとなっています。|
-|cancelType|数値||0=通常キャンセル　現在指定できるのは0のみとなっています。|
-|terminalTransactionId|文字列|必須|POS端末にて生成された取引Id|
-|terminalTransactionDateTime|文字列|必須|POS端末にて生成された取引時刻 yyyy-MM-dd HH:mm:ss.fff zzz |
-|storeId|文字列|必須|レシートローラーに登録されている店舗Id|
-|terminalId|文字列|必須|レシートローラーに登録されている端末Id|
-|staffId|文字列|必須|POS端末に登録されているスタッフId|
-|customerId|文字列||レシートローラーに登録されている仮顧客Id|
-|customerCode|文字列||POS端末に登録されている顧客Id|
-|customerGroup|文字列||POS端末に登録されている顧客グループId|
-|timeOfEnter|文字列||POS端末に登録されている来店時刻|
-|numberOfParty|数値||POS端末に登録されている来店人数|
-|customerMemo|文字列||顧客メモ|
-|items|オブジェクト||購入アイテムの配列|
-|subTotal|数値|必須|小数点2桁まで指定可能、`items`が空指定の時のみ有効、指定されている場合は自動計算された値が上書きされます。|
-|subTotalDiscounmtAmount|数値||小数点2桁まで指定可能、小計に対しての割引金額|
-|subTotalDiscounmtRate|数値||小数点2桁まで指定可能、10%オフの場合は0.1を指定、50%オフの場合は0.5を指定、掛ける数字を指定してください。`subTotalDiscountAmount`が指定されている場合は`subTotalDiscountAmount`が優先されます。|
-|nameOfPoint|文字列||店舗で利用されているポイントプログラムの名称|
-|pointUsed|数値||利用されたポイント数|
-|pointAdded|数値||付与されたポイント数|
-|totalPointAfter|数値||決済後のポイント合計値|
-|totalPointBefore|数値||決済前のポイント合計値|
-|taxPercentageIfInclude|数値||税率（内税の場合）|
-|taxPercentageIfExclude|数値||税率（外税の場合）|
-|roundingPosition|数値||指定した小数点位置|
-|roundingMethod|数値||0=捨て、1=四捨五入、2=切り上げ、3=切り捨て|
-|shippingFee|数値||配送費|
-|serviceFee|数値||サービス費|
-|otherFee|数値||その他手数料|
-|grandTotal|数値|必須|合計値|
-|depositiMethod|数値||支払い方法、1=現金、2=その他|
-|depositi|数値||預かり金額|
-|change|数値||おつり|
-|closed|真偽値||対象のトランザクションが締め済みかどうか|
-|closingDate|文字列||締め時刻|
-|memo|文字列||備考|
-|tags|文字列||コンマで区切られたタグ文字列|
-|barcode|文字列||バーコード文字列|
-|themeId|文字列|必須|対象テーマId|
+## エラーレスポンス
 
-/ items
+- **400 Bad Request**: 不正なリクエストフォーマット
+  ```json
+  {
+    "error": "Invalid request format"
+  }
+  ```
 
-|名前|タイプ|必須|備考|
-|:--|:--|:--|:--|
-|itemId|文字列||レシートローラーによって付与されるLineId|
-|itemTypes|数値||商品タイプ、任意の数値|
-|salesTypes|数値||0=売上、現在は0のみ入力可能|
-|productId|文字列||商品Id|
-|productCode|文字列||商品コード|
-|productName|文字列||商品名|
-|salesPrice|数値||販売価格|
-|qt|数値||個数|
+- **401 Unauthorized**: 認証エラー
+  ```json
+  {
+    "error": "Invalid or missing token"
+  }
+  ```
 
-## レシート作成時のレスポンス
+- **404 Not Found**: 指定されたレシートが見つからない場合
+  ```json
+  {
+    "error": "Receipt not found"
+  }
+  ```
+---
+# レシート詳細の取得 (/{organizationId}/{yyyyMM}/{storeId}/receipt/{id})
 
-レシート作成リクエストが正常に行われると下記のフォーマットでJsonデータが戻されます。
+## リクエスト
 
+```bash
+curl -X 'GET' \
+  'https://api.receiptroller.com/{organizationId}/{yyyyMM}/{storeId}/receipt/{id}' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer {YOUR TOKEN}'
 ```
+
+## レスポンス
+
+```json
 {
   "receipt": {
-    "rowKey": "string",
-    "partitionKey": "string",
-    "organizationId": "string",
-    "transactionType": 0,
+    "organizationId": "1234-organization-5678",
+    "receiptId": "rec-001",
+    "transactionType": 1,
     "cancelType": 0,
-    "terminalTransactionId": "string",
-    "terminalTransactionDateTime": "2023-06-26T14:33:27.871Z",
-    "timestamp": "2023-06-26T14:33:27.871Z",
-    "eTag": {},
-    "channelId": "string",
-    "itemListJsonString": "string",
-    "storeId": "string",
-    "storePrintName": "string",
-    "storePrintAddress": "string",
-    "terminalId": "string",
-    "staffId": "string",
-    "staffPrintName": "string",
-    "customerId": "string",
-    "destinationEmail": "string",
-    "destinationSms": "string",
-    "destinationLineMid": "string",
-    "customerCode": "string",
-    "customerGroup": "string",
-    "customerPrintName": "string",
-    "timeOfEnter": "2023-06-26T14:33:27.871Z",
-    "numberOfParty": 0,
-    "customerMemo": "string",
-    "subTotal": 0,
-    "subTotalDiscountAmount": 0,
-    "subTotalDiscountRate": 0,
-    "subtotalDiscountPrice": "string",
-    "nameOfPoint": "string",
-    "pointsUsed": 0,
-    "pointsAdded": 0,
-    "totalPointsAfetr": 0,
-    "totalPointsBefore": 0,
-    "pointAs": 0,
-    "nameOfMile": "string",
-    "milesUsed": 0,
-    "milesAdded": 0,
-    "milesPointsAfter": 0,
-    "milesPointsBefore": 0,
-    "milesNote": "string",
-    "taxPercentageIfInclude": 0,
-    "taxIfInclude": 0,
-    "taxInclude": "string",
-    "taxExclude": "string",
-    "taxPercentageIfExclude": 0,
-    "roundingPosition": 0,
-    "roundingMethod": 0,
-    "shippingFee": "string",
-    "serviceFee": "string",
-    "otherFee": "string",
-    "grandTotal": 0,
-    "depositMethod": 0,
-    "deposit": 0,
-    "depositCash": 0,
-    "depositCredit": 0,
-    "change": 0,
-    "isClosed": true,
-    "closingDate": "2023-06-26T14:33:27.871Z",
-    "memo": "string",
-    "tags": "string",
-    "barcode": "string",
-    "themeId": "string",
-    "senderLogJsonString": "string",
-    "ocrText": "string",
-    "ocrResult": "string",
-    "receiptStatus": "string",
-    "expenseCategory": "string",
-    "readAndApproved": "2023-06-26T14:33:27.871Z",
-    "isReadable": true,
-    "imageLocation": "string",
-    "storeTel": "string",
-    "storeAddressPrint": "string",
-    "storeCode": "string",
-    "transactionId": "string",
-    "amount": 0,
-    "inTaxSalesTotal": "string",
-    "outTaxSalesTotal": "string",
-    "nonTaxSalesTotal": "string",
-    "couponDiscount": "string",
-    "smaregiTransactionJson": "string"
+    "terminalTransactionId": "txn-001",
+    "terminalTransactionDateTime": "2024-09-26T01:28:18.815Z",
+    "timestamp": "2024-09-26T01:28:18.815Z",
+    "channelId": "ch-001",
+    "terminalId": "tm-001",
+    "customer": {
+      "customerId": "cust-001",
+      "customerName": "山田 太郎",
+      "customerPrintName": "ヤマダ タロウ",
+      "customerGroup": "VIP",
+      "customerCode": "C123456",
+      "customerMemo": "特記事項なし",
+      "destinationEmail": "example@email.com",
+      "destinationSms": "090-1234-5678",
+      "destinationLineMid": "line-id-001",
+      "membershipPrograms": [
+        {
+          "membershipProgramName": "ゴールドメンバー",
+          "membershipProgramPointsUsed": "100",
+          "membershipProgramPointsAdded": "50",
+          "membershipProgramPointsAfter": "150",
+          "membershipProgramPointsBefore": "100",
+          "membershipProgramPointsNote": "キャンペーン加算"
+        }
+      ]
+    },
+    "roundingPosition": 2,
+    "roundingMethod": 1,
+    "memo": "レシートメモ内容",
+    "tags": "セール,特典",
+    "barcode": "BRC123456",
+    "themeId": "theme-001",
+    "store": {
+      "storeId": "1234-store-5678",
+      "storeCode": "S001",
+      "storeName": "渋谷ストア",
+      "storePrintName": "渋谷店",
+      "storeAddress": "東京都渋谷区道玄坂1-2-3",
+      "storePrintAddress": "渋谷区道玄坂1-2-3",
+      "storeRegisgrationName": "渋谷ストア有限会社",
+      "storeRegisgrationCode": "RG123456",
+      "storeTel": "03-1234-5678",
+      "storeMemo": "店舗メモ"
+    },
+    "staff": {
+      "staffId": "stf-001",
+      "staffCode": "S001",
+      "staffName": "鈴木 一郎"
+    },
+    "paymentSummary": {
+      "shippingFee": 500,
+      "serviceFee": 300,
+      "otherFee": 200,
+      "grandTotal": 10000,
+      "despoitMethod": 1,
+      "deposit": 10000,
+      "change": 0,
+      "subTotal": 9200,
+      "subTotalDiscountAmount": 300,
+      "subTotalDiscountRate": 3.5,
+      "subtotalDiscountPrice": 8900,
+      "taxes": [
+        {
+          "taxIfInclude": 500,
+          "taxIfExclude": 400,
+          "taxPercentageIfInclude": 8,
+          "taxPercentageIfExclude": 5,
+          "applicableSubTotalAmount": 8900
+        }
+      ]
+    },
+    "coupon": {
+      "couponName": "10%オフクーポン",
+      "couponPointsUsed": 100,
+      "couponPointsAdded": 50,
+      "couponPointsAfter": 150,
+      "couponPointsBefore": 100,
+      "couponNote": "クーポン適用"
+    },
+    "transactionId": "txn-001"
   },
-  "receiptItems": [
+  "itemDetailLines": [
     {
-      "rowKey": "string",
-      "partitionKey": "string",
-      "detailId": "string",
-      "detailType": 0,
+      "lineId": "line-001",
+      "itemId": "item-001",
+      "itemType": 1,
       "salesType": 0,
-      "timestamp": "2023-06-26T14:33:27.871Z",
-      "eTag": {},
-      "productId": "string",
-      "productCode": "string",
-      "productName": "string",
-      "taxCategory": 0,
-      "price": 0,
-      "salesPrice": 0,
-      "quantity": 0,
-      "taxDivision": "string",
+      "productId": "prod-001",
+      "productCode": "P001",
+      "productName": "商品A",
+      "taxCategory": 1,
+      "price": 1000,
+      "salesPrice": 900,
+      "quantity": 1,
+      "taxDivision": "内税",
       "taxFreeDivision": 0,
       "taxFreeAmount": 0,
-      "cateogyrId": "string",
-      "categoryName": "string",
-      "productBundleGroupId": "string",
-      "printReceiptProductName": "string",
-      "taxRate": "string",
-      "unitNonDiscountSum": "string",
-      "bargainName": "string",
-      "bargainDiscountProportional": "string",
-      "taxIncludeProportional": "string",
-      "taxExcludeProportional": "string",
-      "unitDiscountSum": "string",
-      "unitDiscountName": "string"
+      "categoryId": "cat-001",
+      "categoryName": "食品",
+      "taxRate": "8%",
+      "unitNonDiscountSum": "1000",
+      "bargainName": "特価",
+      "bargainDiscountProportional": "100",
+      "taxIncludeProportional": "80",
+      "taxExcludeProportional": "70",
+      "unitDiscountSum": "900",
+      "unitDiscountName": "割引",
+      "discountPriceProportional": "100",
+      "discountCouponProportional": "50",
+      "couponDiscount": "50",
+      "taxes": [
+        {
+          "taxIfInclude": 80,
+          "taxIfExclude": 70,
+          "taxPercentageIfInclude": 8,
+          "taxPercentageIfExclude": 5,
+          "applicableSubTotalAmount": 900
+        }
+      ]
     }
   ],
-  "subscription": {
-    "rowKey": "string",
-    "partitionKey": "string",
-    "timestamp": "2023-06-26T14:33:27.871Z",
-    "eTag": {},
-    "subscriptionCode": "string",
-    "description": "string",
-    "charged": 0,
-    "unitInCharge": "string",
-    "validSince": "2023-06-26T14:33:27.871Z",
-    "validSinceEpoch": 0,
-    "validUntil": "2023-06-26T14:33:27.871Z",
-    "validUntilEpoch": 0,
-    "paymentMethod": "string",
-    "memo": "string",
-    "maxCall": 0,
-    "called": 0,
-    "chargedBy": "string",
-    "isExipred": true,
-    "exipireHandled": "2023-06-26T14:33:27.871Z",
-    "chargeResponseStatus": "string",
-    "chargeResponseMessage": "string"
-  }
+  "subscriptions": [
+    {
+      "lineId": "sub-001",
+      "subscriptionCode": "SUB123",
+      "description": "サブスクリプションA",
+      "charged": 1500,
+      "unitInCharge": "円",
+      "validSince": "2024-09-26T01:28:18.815Z",
+      "validUntil": "2024-12-26T01:28:18.815Z",
+      "paymentMethod": "クレジットカード",
+      "memo": "サブスクリプションメモ",
+      "maxCall": 10,
+      "called": 2,
+      "chargedBy": "サービスA",
+      "isExipred": false,
+      "exipireHandled": "2024-09-26T01:28:18.815Z",
+      "chargeResponseStatus": "success",
+      "chargeResponseMessage": "成功"
+    }
+  ]
 }
 ```
 
-|名前|タイプ|備考|
-|:--|:--|:--|
-|rowKey|文字列|レシートId|
-|partitionKey|文字列|レシートサブId|
-|transactionType|数値|取引タイプ、0=通常販売　現在指は0のみとなっています。|
-|cancelType|数値|0=通常キャンセル　現在は0のみとなっています。|
-|terminalTransactionId|文字列|POS端末にて生成された取引Id|
-|terminalTransactionDateTime|文字列|POS端末にて生成された取引時刻 yyyy-MM-dd HH:mm:ss.fff zzz|
-|storeId|文字列|店舗Id|
-|terminalId|文字列|端末Id|
-|customerId|文字列|顧客Id|
-|customerCode|文字列|顧客コード|
-|customerGroup|文字列|顧客グループId|
-|timeOfEnter|文字列|来店時刻|
-|numberOfParty|数値|来店人数|
-|customerMemo|文字列|顧客メモ|
-|subTotal|数値|小計|
-|subTotalDiscountAmount|数値|値引き前小計|
-|subTotalDiscountRate|数値|値引き率|
-|nameOfPoint|文字列|ポイント名|
-|pointsUsed|数値|利用されたポイント値|
-|pointsAdded|数値|付与されたポイント値|
-|totalPointsAfetr|数値|決済前のポイント合計値|
-|totalPointsBefore|数値|決済後のポイント合計値|
-|taxPercentageIfInclude|数値|税率（内税の場合）|
-|taxPercentageIfExclude|数値|税率（外税の場合）|
-|roundingPosition|数値|指定した小数点位置|
-|roundingMethod|数値|0=捨て、1=四捨五入、2=切り上げ、3=切り捨て|
-|shippingFee|数値|配送費|
-|serviceFee|数値|サービス費|
-|otherFee|数値|その他手数料|
-|grandTotal|数値|合計|
-|despoitMethod|数値|支払い方法、1=現金、2=その他|
-|deposit|数値|預かり金額|
-|change|数値|おつり|
-|isClosed|真偽値|締めたか否か|
-|memo|文字列|備考|
-|tags|文字列|タグ|
-|barcode|文字列|バーコード|
-|themeId|文字列|テーマId|
-|senderLogJsonString|文字列|購入者への送信ログ|
-|ocrText|文字列|OCRで読み込んだテキスト|
-|ocrResult|文字列|OCRで読み込んだテキストの詳細|
-|receiptStatus|文字列|レシートのステータス|
-|expenceCategory|文字列|経費項目|
-|readAndApproved|文字列|経費精算承認プロセスステータス|
-|isReadable|真偽値|読込可能・不可能のフラグ|
-|imageLocation|文字列|読込レシート保存場所|
-|storeTel|文字列|店舗電話番号|
-|storeAddressPrint|文字列|表示用店舗住所|
-|storeCode|文字列|店舗コード|
-|transactionId|文字列|レシートId|
-|inTaxSalesTotal|数値|内税合計|
-|outTaxSalesTotal|数値|外税合計|
-|nonTaxSalesTotal|数値|免税対象合計|
-|couponDiscount|数値|クーポン値引き|
-|smaregiTransactionJson|文字列|スマレジ取引データ|
-|receiptItems|オブジェクト|購入アイテム詳細|
-|subscription|オブジェクト|対象サブスクリプション情報|
+## エラーレスポンス
 
-/receiptItems
+- **400 Bad Request**: 不正なリクエスト
+  ```json
+  {
+    "error": "Invalid request format"
+  }
+  ```
 
-|名前|タイプ|備考|
-|:--|:--|:--|
-|rowKey|文字列|購入ラインId|
-|partitionKey|文字列|レシートId|
-|detailId|文字列|任意の購入ラインId|
-|detailType|文字列|任意の購入ラインタイプ|
-|salesType|数値|販売タイプ|
-|timestamp|文字列|データ保存時刻|
-|eTag|文字列|タグ情報|
-|productId|文字列|商品Id|
-|productCode|文字列|商品コード|
-|productName|文字列|商品名|
-|taxCategory|文字列|税金カテゴリー|
-|price|数値|価格|
-|salesPrice|数値|販売価格|
-|quantity|数値|個数う|
-|taxDivision|文字列|税金グループ|
-|taxFreeDivision|文字列|免税グループ|
-|taxFreeAmount|数値|免税対象額|
-|cateogyrId|文字列|商品カテゴリーId|
-|categoryName|文字列|商品カテゴリー名|
-|productBundleGroupId|文字列|商品バンドルグループId|
-|printReceiptProductName|文字列|表示用商品名|
-|taxRate|数値|税率|
-|unitNonDiscountSum|数値|値引き対象外金額|
-|bargainName|文字列|値引き名|
-|bargainDiscountProportional|数値|値引き対象金額|
-|taxIncludeProportional|数値|内税対象金額|
-|taxExcludeProportional|数値|外税対象金額|
-|unitDiscountSum|文字列|値引きユニット名|
-|unitDiscountName|文字列|値引き名|
+- **401 Unauthorized**: 認証エラー
+  ```json
+  {
+    "error": "Invalid or missing token"
+  }
+  ```
 
-/subscription
+- **404 Not Found**: 指定されたレシートが見つからない場合
+  ```json
+  {
+    "error": "Receipt not found"
+  }
+  ```
 
-|名前|タイプ|備考|
-|:--|:--|:--|
-|rowKey|文字列|購読プランId|
-|partitionKey|文字列|購読プラン、サブId|
-|timestamp|文字列|データ取得時刻|
-|eTag|文字列|タグ|
-|subscriptionCode|文字列|プランコード|
-|description|文字列|説明文|
-|charged|数値|課金されたユニット値|
-|unitInCharge|文字列|課金されたユニット、現在は 'call'のみ|
-|validSince|文字列|プランの有効開始時刻|
-|validSinceEpoch|数値||
-|validUntil|文字列|プランの無効時刻|
-|validUntilEpoch|数値||
-|paymentMethod|文字列|プラン支払い方法|
-|memo|文字列|備考|
-|maxCall|数値|プランコール最大数|
-|called|数値|すでにコールされている数|
-|chargedBy|文字列|課金したユーザーId|
-|isExipred|文字列|プランが無効の場合|
-|exipireHandled|文字列|プランの追加購入したUserId|
-|chargeResponseStatus|文字列|追加購入に関するステータス|
-|chargeResponseMessage|文字列|追加購入に関するメッセージ|
+---
+
+# レシートの作成 (/{organizationId}/receipt/create)
+
+## リクエスト
+
+```bash
+curl -X 'POST' \
+  'https://api.receiptroller.com/{organizationId}/receipt/create' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer {YOUR TOKEN}' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "transactionType": 0,
+    "cancelType": 0,
+    "terminalTransactionId": "txn-001",
+    "terminalTransactionDateTime": "2024-09-26T01:31:10.197Z",
+    "storeId": "1234-store-5678",
+    "terminalId": "tm-001",
+    "staff": {
+      "staffId": "stf-001",
+      "staffCode": "S001",
+      "staffName": "鈴木 一郎"
+    },
+    "coupon": [
+      {
+        "couponName": "10%オフ",
+        "couponPointsUsed": 100,
+        "couponPointsAdded": 50,
+        "couponPointsAfter": 150,
+        "couponPointsBefore": 100,
+        "couponNote": "クーポン適用"
+      }
+    ],
+    "customer": {
+      "customerId": "cust-001",
+      "customerName": "山田 太郎",
+      "customerPrintName": "ヤマダ タロウ",
+      "customerGroup": "VIP",
+      "customerCode": "C123456",
+      "customerMemo": "特記事項なし",
+      "destinationEmail": "example@email.com",
+      "destinationSms": "090-1234-5678",
+      "destinationLineMid": "line-id-001",
+      "membershipPrograms": [
+        {
+          "membershipProgramName": "ゴールドメンバー",
+          "membershipProgramPointsUsed": "100",
+          "membershipProgramPointsAdded": "50",
+          "membershipProgramPointsAfter": "150",
+          "membershipProgramPointsBefore": "100",
+          "membershipProgramPointsNote": "キャンペーン加算"
+        }
+      ]
+    },
+    "items": [
+      {
+        "lineItemId": "item-001",
+        "lineItemType": 0,
+        "salesTypes": 0,
+        "productId": "prod-001",
+        "productCode": "P001",
+        "productName": "商品A",
+        "salesPrice": 900,
+        "qt": 1,
+        "taxes": [
+          {
+            "taxIfInclude": 80,
+            "taxIfExclude": 70,
+            "taxPercentageIfInclude": 8,
+            "taxPercentageIfExclude": 5,
+            "applicableSubTotalAmount": 900
+          }
+        ]
+      }
+    ],
+    "roundingPosition": 0,
+    "roundingMethod": 1,
+    "paymentSummary": {
+      "shippingFee": 500,
+      "serviceFee": 300,
+      "otherFee": 200,
+      "grandTotal": 10000,
+      "despoitMethod": 1,
+      "deposit": 10000,
+      "change": 0,
+      "subTotal": 9200,
+      "subTotalDiscountAmount": 300,
+      "subTotalDiscountRate": 3.5,
+      "subtotalDiscountPrice": 8900,
+      "taxes": [
+        {
+          "taxIfInclude": 500,
+          "taxIfExclude": 400,
+          "taxPercentageIfInclude": 8,
+          "taxPercentageIfExclude": 5,
+          "applicableSubTotalAmount": 8900
+        }
+      ]
+    },
+    "memo": "レシートメモ",
+    "tags": "セール,特典",
+    "barcode": "BRC123456",
+    "themeId": "theme-001",
+    "currency": "JPY"
+}'
+```
+
+### 注意事項
+
+- **storeId**、**staffId**、**customerId** については検証が行われません。
+- **terminalId** は検証され、実在の端末IDである必要があります。
+- **terminalTransactionId** のユニーク性は検証されません。
+- **roundingMethod**: 
+  - `0`: 切り捨て
+  - `1`: 四捨五入 (0.5 以上を切り上げ)
+  - `2`: 切り上げ
+- **tags** はカンマ区切りです。
+- **themeId** が一致しない場合、デフォルトのテーマが適用されます。
+
+## レスポンス
+
+```json
+{
+  "receipt": {
+    "organizationId": "1234-organization-5678",
+    "receiptId": "rec-001",
+    "transactionType": 0,
+    "cancelType": 0,
+    "terminalTransactionId": "txn-001",
+    "terminalTransactionDateTime": "2024-09-26T01:31:10.199Z",
+    "timestamp": "2024-09-26T01:31:10.199Z",
+    "channelId": "ch-001",
+    "terminalId": "tm-001",
+    "customer": {
+      "customerId": "cust-001",
+      "customerName": "山田 太郎",
+      "customerPrintName": "ヤマダ タロウ",
+      "customerGroup": "VIP",
+      "customerCode": "C123456",
+      "customerMemo": "特記事項なし",
+      "destinationEmail": "example@email.com",
+      "destinationSms": "090-1234-5678",
+      "destinationLineMid": "line-id-001",
+      "membershipPrograms": [
+        {
+          "membershipProgramName": "ゴールドメンバー",
+          "membershipProgramPointsUsed": "100",
+          "membershipProgramPointsAdded": "50",
+          "membershipProgramPointsAfter": "150",
+          "membershipProgramPointsBefore": "100",
+          "membershipProgramPointsNote": "キャンペーン加算"
+        }
+      ]
+    },
+    "roundingPosition": 0,
+    "roundingMethod": 0,
+    "memo": "レシートメモ",
+    "tags": "セール, 特典",
+    "barcode": "BRC123456",
+    "themeId": "theme-001",
+    "store": {
+      "storeId": "1234-store-5678",
+      "storeCode": "S001",
+      "storeName": "渋谷ストア",
+      "storePrintName": "渋谷店",
+      "storeAddress": "東京都渋谷区道玄坂1-2-3",
+      "storePrintAddress": "渋谷区道玄坂1-2-3",
+      "storeRegisgrationName": "渋谷ストア有限会社",
+      "storeRegisgrationCode": "RG123456",
+      "storeTel": "03-1234-5678",
+      "storeMemo": "店舗メモ"
+    },
+    "staff": {
+      "staffId": "stf-001",
+      "staffCode": "S001",
+      "staffName": "鈴木 一郎"
+    },
+    "paymentSummary": {
+      "shippingFee": 500,
+      "serviceFee": 300,
+      "otherFee": 200,
+      "grandTotal": 10000,
+      "despoitMethod": 1,
+      "deposit": 10000,
+      "change": 0,
+      "subTotal": 9200,
+      "subTotalDiscountAmount": 300,
+      "subTotalDiscountRate": 3.5,
+      "subtotalDiscountPrice": 8900,
+      "taxes": [
+        {
+          "taxIfInclude": 500,
+          "taxIfExclude": 400,
+          "taxPercentageIfInclude": 8,
+          "taxPercentageIfExclude": 5,
+          "applicableSubTotalAmount": 8900
+        }
+      ]
+    },
+    "coupon": {
+      "couponName": "10%オフ",
+      "couponPointsUsed": 100,
+      "couponPointsAdded": 50,
+      "couponPointsAfter": 150,
+      "couponPointsBefore": 100,
+      "couponNote": "クーポン適用"
+    },
+    "transactionId": "txn-001"
+  },
+  "itemDetailLines": [
+    {
+      "lineId": "line-001",
+      "itemId": "item-001",
+      "itemType": 0,
+      "salesType": 0,
+      "productId": "prod-001",
+      "productCode": "P001",
+      "productName": "商品A",
+      "taxCategory": 1,
+      "price": 1000,
+      "salesPrice": 900,
+      "quantity": 1,
+      "taxDivision": "内税",
+      "taxFreeDivision": 0,
+      "taxFreeAmount": 0,
+      "categoryId": "cat-001",
+      "categoryName": "食品",
+      "taxRate": "8%",
+      "unitNonDiscountSum": "1000",
+      "bargainName": "特価",
+      "bargainDiscountProportional": "100",
+      "taxIncludeProportional": "80",
+      "taxExcludeProportional": "70",
+      "unitDiscountSum": "900",
+      "unitDiscountName": "割引",
+      "discountPriceProportional": "100",
+      "discountCouponProportional": "50",
+      "couponDiscount": "50",
+      "taxes": [
+        {
+          "taxIfInclude": 80,
+          "taxIfExclude": 70,
+          "taxPercentageIfInclude": 8,
+          "taxPercentageIfExclude": 5,
+          "applicableSubTotalAmount": 900
+        }
+      ]
+    }
+  ],
+  "subscriptions": [
+    {
+      "lineId": "sub-001",
+      "subscriptionCode": "SUB123",
+      "description": "サブスクリプションA",
+      "charged": 1500,
+      "unitInCharge": "円",
+      "validSince": "2024-09-26T01:31:10.199Z",
+      "validUntil": "2024-12-26T01:31:10.199Z",
+      "paymentMethod": "クレジットカード",
+      "memo": "サブスクリプションメモ",
+      "maxCall": 10,
+      "called": 2,
+      "chargedBy": "サービスA",
+      "isExipred": false,
+      "exipireHandled": "2024-09-26T01:31:10.199Z",
+      "chargeResponseStatus": "success",
+      "chargeResponseMessage": "成功"
+    }
+  ]
+}
+```
+
+--- 
+
+# レシートデータのOCR分析 (/{organizationId}/receipt/read)
+
+このエンドポイントは、指定したURLの画像からOCRでレシートデータを読み取り、レシート情報を返します。
+
+## リクエスト
+
+```bash
+curl -X 'POST' \
+  'https://api.receiptroller.com/{organizationId}/receipt/read' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer {YOUR TOKEN}' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "url": "https://example.com/receipt-image.jpg"
+}'
+```
+
+### 注意事項
+
+- 指定されたURLの画像からOCRによるレシートデータ解析を行います。
+- OCRの結果、レシートとして認識できない場合や画像が存在しない場合はエラーになります。
+- サブスクリプションが無効な場合もエラーが返されます。
+
+## レスポンス
+
+OCRの成功時には、レスポンスはレシートの作成と同じ形式です（詳しくは `/receipt/create` のレスポンスを参照）。
+
+### エラーレスポンス例
+
+- **404 Not Found**: 画像が存在しない、または読めない場合
+  ```json
+  {
+    "error": "Image not found or unreadable"
+  }
+  ```
+
+- **400 Bad Request**: レシートとして認識できない場合
+  ```json
+  {
+    "error": "Unable to recognize receipt from image"
+  }
+  ```
+
+- **403 Forbidden**: サブスクリプションが無効な場合
+  ```json
+  {
+    "error": "Subscription is not active"
+  }
+  ```
+
+---
+
+# Base64画像のOCR分析 (/{organizationId}/receipt/upload-read)
+
+このエンドポイントは、Base64エンコードされた画像をOCR分析し、レシートデータとして返します。
+
+## リクエスト
+
+```bash
+curl -X 'POST' \
+  'https://api.receiptroller.com/{organizationId}/receipt/upload-read' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer {YOUR TOKEN}' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "imageInBase64String": "{BASE64_ENCODED_IMAGE}"
+}'
+```
+
+### 注意事項
+
+- `imageInBase64String` フィールドにBase64でエンコードされた画像データを渡します。
+- OCRによるレシートデータの解析を行い、解析結果を返します。
+
+## レスポンス
+
+OCR分析に成功すると、レスポンスはレシート作成時のレスポンスと同じ形式です（詳しくは `/receipt/create` のレスポンスを参照）。
+
+### エラーレスポンス例
+
+- **400 Bad Request**: 画像が不正、または解析できない場合
+  ```json
+  {
+    "error": "Invalid or unreadable image data"
+  }
+  ```
+
+- **403 Forbidden**: サブスクリプションが無効な場合
+  ```json
+  {
+    "error": "Subscription is not active"
+  }
+  ```
+
+
+--- 
+
+# Base64画像の精算レシートOCR分析 (/{organizationId}/receipt/store/{storeId}/readtype/{readType}/upload-read)
+
+このエンドポイントは、Base64エンコードされた精算レシート画像をOCRで解析し、レシートデータを返します。
+
+## リクエスト
+
+```bash
+curl -X 'POST' \
+  'https://api.receiptroller.com/{organizationId}/receipt/store/{storeId}/readtype/{readType}/upload-read' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer {YOUR TOKEN}' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "imageInBase64String": "{BASE64_ENCODED_IMAGE}"
+}'
+```
+
+### 注意事項
+
+- `imageInBase64String` フィールドにBase64でエンコードされたレシート画像データを渡します。
+- OCRによる決済レシートデータの解析を行い、解析結果を返します。
+
+## レスポンス
+
+**注意事項**: 読み取れなかった項目や存在しない項目については、レスポンスに含まれません。返却されるフィールドは、解析結果に基づいて取得できた情報のみです。
+
+
+```json
+{
+    "rotatedImageUrl": "https://example.com/rotatedImage.jpg",
+    "organizationId": "org-1234",
+    "receipt": {
+        "id": "org-1234-receipt-5678",
+        "timestamp": "2024-09-26T02:04:09.257Z",
+        "createdAt": "2024-09-26T02:04:09.257Z",
+        "isTotalSalesReceipt": true,
+        "currency": "JPY",
+        "setId": "set-1001",
+        "nameOfStore": "Shibuya Store",
+        "address": "1-2-3 Shibuya, Tokyo",
+        "prefecture": "Tokyo",
+        "locality": "Shibuya",
+        "phoneNumber": "03-1234-5678",
+        "terminalId": "terminal-001",
+        "settlementDateTime": "2024-09-26T01:54:32.506Z",
+        "subtotal": "10000",
+        "subTotalDiscount": "500",
+        "subTotalDiscountExIntTax": "450",
+        "subTotalDiscountRate": "5%",
+        "subTotalDiscountRateExIntTax": "4.5%",
+        "useOfPoints": "200",
+        "singleItemDiscount": "100",
+        "roundingDownDiscount": "0",
+        "total": "9500",
+        "totalCash": "5000",
+        "totalCredit": "4500",
+        "totalSmaregiPaymentIcReader": "0",
+        "totalSmaregiPaymentVega3000": "0",
+        "TotalSmaregiPaygate": "0",
+        "totalPaymentMaster": "0",
+        "totalPmJmups": "0",
+        "totalPmThincacloud": "0",
+        "totalFgCenter": "0",
+        "totalRakutenPay": "0",
+        "totalStoresCoiney": "0",
+        "totalSquare": "4500",
+        "totalJetsCats300Cats330": "0",
+        "totalJetsJtC17u": "0",
+        "totalJmupsJtc30l": "0",
+        "totalJtc31qJetsCloud": "0",
+        "totalJtvt10": "0",
+        "totalOtegaruPayCredit": "0",
+        "totalOtegaruPayEMoney": "0",
+        "totalOtegaruPayJmups2Pocket": "0",
+        "totalInfoxJtc16u": "0",
+        "totalVeega3000Mobile2": "0",
+        "totalSteraTerminal": "0",
+        "totalSaturn1000eSaturn1000l": "0",
+        "totalSmartcoin": "0",
+        "totalStarPay": "0",
+        "totalDracoin": "0",
+        "totalProductVouchers": "0",
+        "totalPromotionVouchers": "0",
+        "totalChangeDifference": "0",
+        "totalTransportIC": "0",
+        "TotalAlipay": "0",
+        "TotalWeChatPay": "0",
+        "TotalSaleOnCredit": "0",
+        "salesTax": "950",
+        "taxIncluded": "10000",
+        "taxExcluded": "9000",
+        "taxExemptionTargetAmount": "0",
+        "taxExemptionAmount": "0",
+        "totalExcludedFromSalesExcludedTaxExcluded": "0",
+        "totalReceivedExcludedFromSales": "0",
+        "totalReceivedExcludedFromSalesCash": "0",
+        "totalReceivedExcludedFromSalesCredit": "0",
+        "totalReceivedExcludedFromSalesSmaregiPaymentIcReader": "0",
+        "totalReceivedExcludedFromSalesSmaregiPaymentVega3000": "0",
+        "TotalReceivedExcludedFromSalesSmaregiPaygate": "0",
+        "totalReceivedExcludedFromSalesPaymentMaster": "0",
+        "totalReceivedExcludedFromSalesPmJmups": "0",
+        "totalReceivedExcludedFromSalesPmThincacloud": "0",
+        "totalReceivedExcludedFromSalesFgCenter": "0",
+        "totalReceivedExcludedFromSalesRakutenPay": "0",
+        "totalReceivedExcludedFromSalesStoresCoiney": "0",
+        "totalReceivedExcludedFromSalesSquare": "4500",
+        "totalReceivedExcludedFromSalesJetsCats300Cats330": "0",
+        "totalReceivedExcludedFromSalesJetsJtC17u": "0",
+        "totalReceivedExcludedFromSalesJmupsJtc30l": "0",
+        "totalReceivedExcludedFromSalesJtc31qJetsCloud": "0",
+        "totalReceivedExcludedFromSalesJtvt10": "0",
+        "totalReceivedExcludedFromSalesOtegaruPayCredit": "0",
+        "totalReceivedExcludedFromSalesOtegaruPayEMoney": "0",
+        "totalReceivedExcludedFromSalesOtegaruPayJmups2Pocket": "0",
+        "totalReceivedExcludedFromSalesInfoxJtc16u": "0",
+        "totalReceivedExcludedFromSalesVeega3000Mobile2": "0",
+        "totalReceivedExcludedFromSalesSteraTerminal": "0",
+        "totalReceivedExcludedFromSalesSaturn1000eSaturn1000l": "0",
+        "totalReceivedExcludedFromSalesSmartcoin": "0",
+        "totalReceivedExcludedFromSalesStarPay": "0",
+        "totalReceivedExcludedFromSalesDracoin": "0",
+        "totalReceivedExcludedFromSalesProductVouchers": "0",
+        "totalReturned": "0",
+        "totalReturnedCash": "0",
+        "totalReturnedCredit": "0",
+        "totalReturnedSmaregiPaymentIcReader": "0",
+        "totalReturnedSmaregiPaymentVega3000": "0",
+        "TotalReturnedSmaregiPaygate": "0",
+        "totalReturnedPaymentMaster": "0",
+        "totalReturnedPmJmups": "0",
+        "totalReturnedPmThincacloud": "0",
+        "totalReturnedFgCenter": "0",
+        "totalReturnedRakutenPay": "0",
+        "totalReturnedStoresCoiney": "0",
+        "totalReturnedSquare": "0",
+        "totalReturnedJetsCats300Cats330": "0",
+        "totalReturnedJetsJtC17u": "0",
+        "totalReturnedJmupsJtc30l": "0",
+        "totalReturnedJtc31qJetsCloud": "0",
+        "totalReturnedJtvt10": "0",
+        "totalReturnedOtegaruPayCredit": "0",
+        "totalReturnedOtegaruPayEMoney": "0",
+        "totalReturnedOtegaruPayJmups2Pocket": "0",
+        "totalReturnedInfoxJtc16u": "0",
+        "totalReturnedVeega3000Mobile2": "0",
+        "totalReturnedSteraTerminal": "0",
+        "totalReturnedSaturn1000eSaturn1000l": "0",
+        "totalReturnedSmartcoin": "0",
+        "totalReturnedStarPay": "0",
+        "totalReturnedDracoin": "0",
+        "totalReturnedProductVouchers": "0",
+        "totalCancelled": "0",
+        "totalCancelledCash": "0",
+        "totalCancelledCredit": "0",
+        "totalCancelledSmaregiPaymentIcReader": "0",
+        "totalCancelledSmaregiPaymentVega3000": "0",
+        "TotalCancelledSmaregiPaygate": "0",
+        "totalCancelledPaymentMaster": "0",
+        "totalCancelledPmJmups": "0",
+        "totalCancelledPmThincacloud": "0",
+        "totalCancelledFgCenter": "0",
+        "totalCancelledRakutenPay": "0",
+        "totalCancelledStoresCoiney": "0",
+        "totalCancelledSquare": "0",
+        "totalCancelledJetsCats300Cats330": "0",
+        "totalCancelledJetsJtC17u": "0",
+        "totalCancelledJmupsJtc30l": "0",
+        "totalCancelledJtc31qJetsCloud": "0",
+        "totalCancelledJtvt10": "0",
+        "totalCancelledOtegaruPayCredit": "0",
+        "totalCancelledOtegaruPayEMoney": "0",
+        "totalCancelledOtegaruPayJmups2Pocket": "0",
+        "totalCancelledInfoxJtc16u": "0",
+        "totalCancelledVeega3000Mobile2": "0",
+        "totalCancelledSteraTerminal": "0",
+        "totalCancelledSaturn1000eSaturn1000l": "0",
+        "totalCancelledSmartcoin": "0",
+        "totalCancelledStarPay": "0",
+        "totalCancelledDracoin": "0",
+        "totalCancelledProductVouchers": "0",
+        "netSales": "9500",
+        "netSalesPointUsedSalesIncluded": "200",
+        "taxAndTotalExcludedFromSalesInTotal": "0",
+        "salesTargetItemsTotalIncludeTaxIncluded": "10000",
+        "salesTargetItemsTotalExcludeTaxIncluded": "9000",
+        "soldItemsAmountInSales": "9500",
+        "returnedItemsAmountInSales": "0",
+        "totalPointUsedSales": "200",
+        "totalTransactions": "50",
+        "totalCustomers": "45",
+        "standardTransactions": "30",
+        "standardTransactionsCash": "15",
+        "standardTransactionsCredit": "15",
+        "standardTransactionsSmaregiPaymentIcReader": "0",
+        "standardTransactionsSmaregiPaymentVega3000": "0",
+        "StandardTransactionsSmaregiPaygate": "0",
+        "standardTransactionsPaymentMaster": "0",
+        "standardTransactionsPmJmups": "0",
+        "standardTransactionsPmThincacloud": "0",
+        "standardTransactionsFgCenter": "0",
+        "standardTransactionsRakutenPay": "0",
+        "standardTransactionsStoresCoiney": "0",
+        "standardTransactionsSquare": "15",
+        "standardTransactionsJetsCats300Cats330": "0",
+        "standardTransactionsJetsJtC17u": "0",
+        "standardTransactionsJmupsJtc30l": "0",
+        "standardTransactionsJtc31qJetsCloud": "0",
+        "standardTransactionsJtvt10": "0",
+        "standardTransactionsOtegaruPayCredit": "0",
+        "standardTransactionsOtegaruPayEMoney": "0",
+        "standardTransactionsOtegaruPayJmups2Pocket": "0",
+        "standardTransactionsInfoxJtc16u": "0",
+        "standardTransactionsVeega3000Mobile2": "0",
+        "standardTransactionsSteraTerminal": "0",
+        "standardTransactionsSaturn1000eSaturn1000l": "0",
+        "standardTransactionsSmartcoin": "0",
+        "standardTransactionsStarPay": "0",
+        "standardTransactionsDracoin": "0",
+        "standardTransactionsProductVouchers": "0",
+        "standardTransactionsCancelled": "0",
+        "taxExemptionTransactions": "0",
+        "otherTransactions": "20",
+        "otherDepositTransactions": "10",
+        "otherDepositCancellationTransactions": "0",
+        "otherWithdrawalTransactions": "5",
+        "otherWithdrawalCancellationTransactions": "0",
+        "otherAdvancePaymentTransactions": "5",
+        "otherAdvancePaymentCancellationTransactions": "0",
+        "otherAdvancePaymentRefundedTransactions": "0",
+        "otherAdvancePaymentRefundedCancellationTransactions": "0",
+        "otherPointAdditionTransactions": "0",
+        "otherPointAdditionCancellationTransactions": "0",
+        "otherPointDeductionTransactions": "0",
+        "otherPointDeductionCancellationTransactions": "0",
+        "otherReservationTransactions": "0",
+        "otherReservationCancellationTransactions": "0",
+        "otherCouponTicketsTransactions": "0",
+        "otherCouponTicketsCancellationTransactions": "0",
+        "totalMoneyInAndOutAmount": "5000",
+        "totalTipsCashAmount": "0",
+        "totalTipsCreditAmount": "0",
+        "totalTipsCashTransactions": "0",
+        "totalTipsCreditTransactions": "0",
+        "settlementCash10KYenBills": "2",
+        "settlementCash5KYenBills": "1",
+        "settlementCash2KYenBills": "0",
+        "settlementCash1KYenBills": "10",
+        "settlementCash500YenCoins": "0",
+        "settlementCash100YenCoins": "0",
+        "settlementcash50YenCoins": "0",
+        "settlementCash10YenCoins": "0",
+        "settlementCash5YenCoins": "0",
+        "settlementCash1YenCoins": "0",
+        "settlementCashChangeReserved": "100",
+        "settlementCashBankDeposit": "4000",
+        "settlementCashMoneyReservedForNextDay": "500",
+        "settlementCashShortage": "100",
+        "totalSalesExcludedFromSales": "0",
+        "totalSalesExcludedFromSalesExcludeTaxIncluded": "0",
+        "totalSalesExcludedFromSalesIncludeTaxIncluded": "0",
+        "tax8Price": "800",
+        "tax10Price": "1000",
+        "tax8TargetAmount": "8000",
+        "tax10TargetAmount": "10000",
+        "tax8ExemptionPrice": "0",
+        "tax10ExemptionPrice": "0",
+        "tax8ExemptionTargetAmount": "0",
+        "tax10ExemptionTargetAmount": "0",
+        "departmentApparelSalesTotal": "3000",
+        "departmentApparelSalesTotalExcludeTax": "2700",
+        "departmentGoodsSalesTotal": "7000",
+        "departmentGoodsSalesTotalExcludeTax": "6300",
+        "totalSettlementCount": "50",
+        "CustomField1": "string",
+        "CustomField2": "string",
+        "CustomField3": "string",
+        "CustomField4": "string",
+        "CustomField5": "string",
+        "CustomField6": "string",
+        "CustomField7": "string",
+        "CustomField8": "string",
+        "CustomField9": "string",
+        "CustomField10": "string"
+    },
+    "ocr": {
+        "status": 0,
+        "createdDateTime": "2024-09-26T02:04:09.257Z",
+        "lastUpdatedDateTime": "2024-09-26T02:10:09.257Z",
+        "analyzeResult": {
+            "version": "1.0",
+            "modelVersion": "2024-09",
+            "readResults": [
+                {
+                    "page": 1,
+                    "language": "en",
+                    "angle": 0,
+                    "width": 600,
+                    "height": 800,
+                    "unit": "pixel",
+                    "lines": [
+                        {
+                            "language": "en",
+                            "boundingBox": [
+                                0,
+                                0,
+                                600,
+                                50
+                            ],
+                            "appearance": {
+                                "style": {
+                                    "name": "bold",
+                                    "confidence": 0.99
+                                }
+                            },
+                            "text": "Store Name: Example Store",
+                            "words": [
+                                {
+                                    "boundingBox": [
+                                        0,
+                                        0,
+                                        300,
+                                        50
+                                    ],
+                                    "text": "Store",
+                                    "confidence": 0.98
+                                },
+                                {
+                                    "boundingBox": [
+                                        300,
+                                        0,
+                                        600,
+                                        50
+                                    ],
+                                    "text": "Name:",
+                                    "confidence": 0.98
+                                },
+                                {
+                                    "boundingBox": [
+                                        0,
+                                        50,
+                                        600,
+                                        100
+                                    ],
+                                    "text": "Example Store",
+                                    "confidence": 0.99
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "ocrLines": [
+        {
+            "lineOrder": 1,
+            "lineText": "Store Name: Example Store",
+            "words": [
+                {
+                    "handWriteingText": "Store Name:",
+                    "topLeftX": 0,
+                    "topLeftY": 0,
+                    "text": "Store Name: Example Store"
+                }
+            ]
+        }
+    ],
+    "subscription": {
+        "partitionKey": "org123",
+        "rowKey": "sub456",
+        "timestamp": "2024-09-26T02:04:09.257Z",
+        "eTag": {},
+        "subscriptionCode": "SUB123",
+        "description": "OCR analysis subscription",
+        "priceCurrency": "JPY",
+        "charged": 500,
+        "chargedPrice": "500",
+        "chargedQuality": 1,
+        "unitPrice": "500",
+        "validSince": "2024-09-25T00:00:00.000Z",
+        "validSinceEpoch": 1695692400,
+        "validUntil": "2024-12-31T23:59:59.999Z",
+        "validUntilEpoch": 1704076799,
+        "paymentMethod": "CreditCard",
+        "memo": "OCR analysis for receipts",
+        "maxCall": 1000,
+        "called": 300,
+        "chargedBy": "Automatic Billing",
+        "isExpired": false,
+        "expireHandled": "2024-12-31T23:59:59.999Z",
+        "chargeResponseStatus": "Success",
+        "chargeResponseMessage": "Transaction complete"
+    }
+}
+```
+
+### エラーレスポンス例
+
+#### 画像が存在しない場合
+```json
+{
+  "error": "Image not found",
+  "status": 404
+}
+
+#### OCRでレシートとして認識できなかった場合
+```json
+{
+ "error": "Unable to process receipt from image",
+  "status": 422
+}
+
+#### サブスクリプションが有効でない場合
+```json
+{
+  "error": "Subscription not active",
+  "status": 403
+}
+
+#### サーバー処理に失敗した場合
+```json
+{
+  "error": "An unexpected server issue occurred",
+  "status": 500
+}
+

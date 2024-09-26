@@ -78,6 +78,8 @@ curl -X 'POST' \
     "error": "Store or plan not found"
   }
   ```
+
+---
 # Retrieve Terminal Details (`/{organizationId}/terminal/{id}`)
 
 ## Request
@@ -124,6 +126,8 @@ curl -X 'GET' \
     "error": "Terminal not found"
   }
   ```
+
+---
 # Create Terminal (`/{organizationId}/terminal/create`)
 
 ## Request
@@ -182,6 +186,8 @@ curl -X 'POST' \
     "error": "Terminal code already exists"
   }
   ```
+
+---
 # Update Terminal (`/{organizationId}/terminal/update`)
 
 ## Request

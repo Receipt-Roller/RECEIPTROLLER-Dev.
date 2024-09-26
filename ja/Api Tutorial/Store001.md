@@ -4,7 +4,7 @@
 
 ---
 
-# 店舗一覧の取得 (/{organizationId}/stores)
+# 店舗一覧の取得 (`/{organizationId}/stores`)
 
 ## リクエスト
 
@@ -81,7 +81,7 @@ curl -X 'POST' \
   ```
 
 ---
-# 店舗電話番号による検索 (/{organizationId}/stores/phonenumber)
+# 店舗電話番号による検索 (`/{organizationId}/stores/phonenumber`)
 
 ## リクエスト
 
@@ -159,7 +159,7 @@ curl -X 'POST' \
 
 ---
 
-# 店舗詳細の取得 (/{organizationId}/store/{id})
+# 店舗詳細の取得 (`/{organizationId}/store/{id}`)
 
 ## リクエスト
 
@@ -212,7 +212,7 @@ curl -X 'GET' \
   ```
 
 ---
-# 店舗の作成 (/{organizationId}/store/create)
+# 店舗の作成 (`/{organizationId}/store/create`)
 
 ## リクエスト
 
@@ -290,7 +290,7 @@ curl -X 'POST' \
 
 ---
 
-# 店舗情報の更新 (/{organizationId}/store/update)
+# 店舗情報の更新 (`/{organizationId}/store/update`)
 
 ## リクエスト
 

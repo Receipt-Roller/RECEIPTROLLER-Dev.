@@ -88,7 +88,7 @@ curl -X 'POST' \
 
 ## Request
 
-\``bash
+```bash
 curl -X 'POST' \
   'https://api.receiptroller.com/{organizationId}/stores/phonenumber' \
   -H 'accept: application/json' \
@@ -100,7 +100,7 @@ curl -X 'POST' \
     "itemsPerPage": 10,
     "sort": "storeName asc"
 }'
-\``
+```
 
 - **phoneNumber**: Store's phone number to search.
 - **currentPage**: Current page for pagination.
@@ -109,7 +109,7 @@ curl -X 'POST' \
 
 ## Response
 
-\``json
+```json
 {
   "stores": {
     "items": [
@@ -135,30 +135,30 @@ curl -X 'POST' \
     "sort": "storeName asc"
   }
 }
-\``
+```
 
 ## Error Response
 
 - **404 Not Found**: No store matches the phone number.
-\``json
+```json
 {
   "error": "Store not found"
 }
-\``
+```
 
 - **400 Bad Request**: Invalid request format.
-\``json
+```json
 {
   "error": "Invalid request format"
 }
-\``
+```
 
 - **401 Unauthorized**: Authentication error.
-\``json
+```json
 {
   "error": "Invalid or missing token"
 }
-\``
+```
 
 ---
 

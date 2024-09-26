@@ -127,7 +127,7 @@
 
 
 
-# レシートデータの取得 (/{organizationId}/receipts)
+# レシートデータの取得 (`/{organizationId}/receipts`)
 
 
 
@@ -346,7 +346,7 @@ curl -X 'POST' \
   }
   ```
 ---
-# レシート詳細の取得 (/{organizationId}/{yyyyMM}/{storeId}/receipt/{id})
+# レシート詳細の取得 (`/{organizationId}/{yyyyMM}/{storeId}/receipt/{id}`)
 
 ## リクエスト
 
@@ -535,7 +535,7 @@ curl -X 'GET' \
 
 ---
 
-# レシートの作成 (/{organizationId}/receipt/create)
+# レシートの作成 (`/{organizationId}/receipt/create`)
 
 ## リクエスト
 
@@ -808,7 +808,7 @@ curl -X 'POST' \
 
 --- 
 
-# レシートデータのOCR分析 (/{organizationId}/receipt/read)
+# レシートデータのOCR分析 (`/{organizationId}/receipt/read`)
 
 このエンドポイントは、指定したURLの画像からOCRでレシートデータを読み取り、レシート情報を返します。
 
@@ -860,7 +860,7 @@ OCRの成功時には、レスポンスはレシートの作成と同じ形式�
 
 ---
 
-# Base64画像のOCR分析 (/{organizationId}/receipt/upload-read)
+# Base64画像のOCR分析 (`/{organizationId}/receipt/upload-read`)
 
 このエンドポイントは、Base64エンコードされた画像をOCR分析し、レシートデータとして返します。
 
@@ -905,7 +905,7 @@ OCR分析に成功すると、レスポンスはレシート作成時のレス�
 
 --- 
 
-# Base64画像の精算レシートOCR分析 (/{organizationId}/receipt/store/{storeId}/readtype/{readType}/upload-read)
+# Base64画像の精算レシートOCR分析 (`/{organizationId}/receipt/store/{storeId}/readtype/{readType}/upload-read`)
 
 このエンドポイントは、Base64エンコードされた精算レシート画像をOCRで解析し、レシートデータを返します。
 

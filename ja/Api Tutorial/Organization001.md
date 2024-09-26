@@ -18,50 +18,145 @@
 | address2          | 文字列    |       | 24文字 | ビル名、部屋名        |
 | tel               | 文字列    | 必須  | 24文字 | 電話番号             |
 | email             | 文字列    | 必須  | 48文字 | メールアドレス       |
-| smaregiContractId | 文字列    |       |        | 閲覧のみ             |
 | validPlans        | オブジェクト |       |        | 閲覧のみ、有効プランの一覧 |
 
 ---
-
 # 組織一覧の取得 (/account/organizations)
+
+このエンドポイントでは、組織の一覧情報を取得できます。
+
+---
 
 ## リクエスト
 
-```bash
-curl -X 'GET' \
-  'https://api.receiptroller.com/account/organizations' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer {YOUR TOKEN}'
-```
+- **エンドポイント**
+
+    ```
+    GET https://api.receiptroller.com/account/organizations
+    ```
+
+- **ヘッダー**
+
+    ```
+    Accept: application/json
+    Authorization: Bearer {YOUR TOKEN}
+    ```
+
+---
 
 ## レスポンス
+
+- **ステータスコード**
+
+    ```
+    200 OK: 正常に処理されました。
+    401 Unauthorized: 認証に失敗しました。
+    ```
+
+- **レスポンスボディ**
+
+    | フィールド名   | 型     | 説明           |
+    |----------------|--------|----------------|
+    | id             | string | 組織のID       |
+    | name           | string | 組織の名前     |
+
+---
+
+### レスポンス例
 
 ```json
 [
   {
-    "id": "9356c405-b51a-4c40-8a11-9898c6d4be66",
-    "name": "下田商店"
+    "id": "1a2b3c4d-5678-9101-1121-3141abc12345",
+    "name": "Osaka Food Mart"
   },
   {
-    "id": "8fe6866d-c5e1-4703-875d-d2bdfa10bc2a",
-    "name": "TOKYO ANIME"
+    "id": "4e5f6g7h-1234-5678-9101-1121def56789",
+    "name": "Kobe Fashion Outlet"
   },
   {
-    "id": "e53f4703-66cf-4d08-b6fe-77a1c65b4607",
-    "name": "ABCクッキー"
+    "id": "9i8j7k6l-4321-8765-2109-2233ghi98765",
+    "name": "Kyoto Tea House"
   },
   {
-    "id": "61fd7924-6a42-4837-bd84-6b9f3046c033",
-    "name": "渋谷アパレル"
+    "id": "5m6n7o8p-8765-4321-0987-6677klm54321",
+    "name": "Shibuya Electronics"
   }
 ]
 ```
+
+## エラーハンドリング
+
+API利用時にエラーが発生した場合、以下の形式でエラーレスポンスが返されます。
+
+- **レスポンスボディ**
+
+    | フィールド名 | 型     | 説明                |
+    |-------------|--------|---------------------|
+    | error       | string | エラーメッセージ     |
+    | status      | int    | HTTPステータスコード |
+
+---
+
+### エラーレスポンス例
+
+- **401 Unauthorized（認証に失敗した場合）**
+
+    ```json
+    {
+      "error": "Unauthorized access. Invalid or missing token.",
+      "status": 401
+    }
+    ```
+
+- **404 Not Found（組織が見つからない場合）**
+
+    ```json
+    {
+      "error": "Organization not found.",
+      "status": 404
+    }
+    ```
+
+- **500 Internal Server Error（サーバー内部エラーの場合）**
+
+    ```json
+    {
+      "error": "An unexpected server issue occurred.",
+      "status": 500
+    }
+    ```
 
 ---
 
 # 組織詳細取得 (/account/organization/{id})
 
+このエンドポイントでは、特定の組織の詳細情報を取得できます。
+
+---
+
 ## リクエスト
+
+- **エンドポイント**
+
+    ```
+    GET https://api.receiptroller.com/account/organization/{id}
+    ```
+
+- **ヘッダー**
+
+    ```
+    Accept: application/json
+    Authorization: Bearer {YOUR TOKEN}
+    ```
+
+- **パスパラメータ**
+
+    | パラメータ名  | 型     | 必須 | 説明        |
+    |--------------|--------|------|-------------|
+    | id           | string | 必須 | 組織のID     |
+
+### リクエスト例
 
 ```bash
 curl -X 'GET' \
@@ -70,22 +165,48 @@ curl -X 'GET' \
   -H 'Authorization: Bearer {YOUR TOKEN}'
 ```
 
+---
+
 ## レスポンス
+
+- **ステータスコード**
+
+    ```
+    200 OK: 正常に処理されました。
+    404 Not Found: 組織が見つかりません。
+    ```
+
+- **レスポンスボディ**
+
+    | フィールド名         | 型     | 説明               |
+    |----------------------|--------|--------------------|
+    | id                   | string | 組織のID           |
+    | name                 | string | 組織の名前         |
+    | postalCode           | string | 郵便番号           |
+    | country              | string | 国                 |
+    | prefecture           | string | 都道府県           |
+    | locality             | string | 市町村             |
+    | address1             | string | 住所1              |
+    | address2             | string | 住所2              |
+    | tel                  | string | 電話番号           |
+    | email                | string | メールアドレス     |
+    | validPlans           | array  | 有効なプラン情報    |
+
+### レスポンス例
 
 ```json
 {
   "id": "8fe6866d-c5e1-4703-875d-d2bdfa10bc2a",
   "name": "TOKYO ANIME",
-  "postalCode": "",
-  "country": "",
-  "prefecture": "",
-  "locality": "",
-  "address1": "",
-  "address2": null,
-  "tel": null,
-  "email": null,
-  "smaregiContractId": null,
-  "validPlans": []
+  "postalCode": "1600022",
+  "country": "JAPAN",
+  "prefecture": "東京都",
+  "locality": "新宿区",
+  "address1": "新宿3丁目5-6",
+  "address2": "ABCビル",
+  "tel": "03-1234-5678",
+  "email": "info@tokyoanime.jp",
+  "validPlans": ["basic", "premium"]
 }
 ```
 
@@ -93,7 +214,43 @@ curl -X 'GET' \
 
 # 組織情報の更新 (/account/organization/update)
 
+このエンドポイントでは、組織の情報を更新します。
+
+---
+
 ## リクエスト
+
+- **エンドポイント**
+
+    ```
+    POST https://api.receiptroller.com/account/organization/update
+    ```
+
+- **ヘッダー**
+
+    ```
+    Content-Type: application/json
+    Accept: application/json
+    Authorization: Bearer {YOUR TOKEN}
+    ```
+
+- **リクエストボディ**
+
+    | フィールド名   | 型     | 必須 | 説明            |
+    |---------------|--------|------|-----------------|
+    | id            | string | 必須 | 組織のID         |
+    | name          | string | 任意 | 組織名           |
+    | postalCode    | string | 任意 | 郵便番号         |
+    | country       | string | 任意 | 国               |
+    | prefecture    | string | 任意 | 都道府県         |
+    | locality      | string | 任意 | 市町村           |
+    | address1      | string | 任意 | 住所1            |
+    | address2      | string | 任意 | 住所2            |
+    | tel           | string | 任意 | 電話番号         |
+    | email         | string | 任意 | メールアドレス   |
+    | smaregiContractId | string | 任意 | スマレジ契約ID   |
+
+### リクエスト例
 
 ```bash
 curl -X 'POST' \
@@ -112,7 +269,33 @@ curl -X 'POST' \
 }'
 ```
 
+---
+
 ## レスポンス
+
+- **ステータスコード**
+
+    ```
+    200 OK: 正常に処理されました。
+    ```
+
+- **レスポンスボディ**
+
+    | フィールド名         | 型     | 説明               |
+    |----------------------|--------|--------------------|
+    | id                   | string | 組織のID           |
+    | name                 | string | 組織の名前         |
+    | postalCode           | string | 郵便番号           |
+    | country              | string | 国                 |
+    | prefecture           | string | 都道府県           |
+    | locality             | string | 市町村             |
+    | address1             | string | 住所1              |
+    | address2             | string | 住所2              |
+    | tel                  | string | 電話番号           |
+    | email                | string | メールアドレス     |
+    | smaregiContractId    | string | スマレジ契約ID     |
+
+### レスポンス例
 
 ```json
 {
@@ -129,46 +312,3 @@ curl -X 'POST' \
   "smaregiContractId": null
 }
 ```
-
----
-
-# 組織の作成 (/account/organization/create)
-
-## リクエスト
-
-```bash
-curl -X 'POST' \
-  'https://api.receiptroller.com/account/organization/create' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer {YOUR TOKEN}' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "name":"新しい組織名",
-  "postalCode": "1234567",
-  "country": "JAPAN",
-  "prefecture": "東京都",
-  "locality": "渋谷区",
-  "address1": "道玄坂1-2-3",
-  "address2": "ビル101",
-  "tel": "03-1234-5678",
-  "email": "neworg@example.com"
-}'
-```
-
-## レスポンス
-
-```json
-{
-  "id": "新しい組織ID",
-  "name": "新しい組織名",
-  "postalCode": "1234567",
-  "country": "JAPAN",
-  "prefecture": "東京都",
-  "locality": "渋谷区",
-  "address1": "道玄坂1-2-3",
-  "address2": "ビル101",
-  "tel": "03-1234-5678",
-  "email": "neworg@example.com"
-}
-```
-

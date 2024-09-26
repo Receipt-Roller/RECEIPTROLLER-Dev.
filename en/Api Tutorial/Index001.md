@@ -10,6 +10,8 @@ To register for an API account, please refer [here](https://business.receiptroll
 
 The API is free for up to 1,000 uses in 30 days. For more usage or commercial purposes, a paid plan is required.
 
+You can also explore and use the API directly via the Swagger documentation [here](https://api.receiptroller.com/index.html?urls.primaryName=v1.2).
+
 ## Table of Contents
 
 - [Login and Token Retrieval](https://github.com/Receipt-Roller/RECEIPTROLLER-Dev./blob/main/en/Api%20Tutorial/Login001.md)
